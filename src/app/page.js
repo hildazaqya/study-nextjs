@@ -1,34 +1,34 @@
-import { Header } from "@/components/header";
-import { Footer } from "@/components/footer";
-import { Card } from "@/components/card";
-import { NameCard } from "@/components/name-card";
-import { UserInfo } from "@/components/userinfo";
-import { UserProvider } from "@/components/provider";
-import { NoteCreate } from "@/components/notes/note.create";
-import { NotesLists } from "@/components/notes/note.lists";
+import { TodoCreate } from "@/components/todos/todo.create";
+import { TodoCard } from "@/components/todos/todo.card";
 
-const students = [
-  { id: 1, name: "Hilda", age: 21, gender: "female" },
-  { id: 2, name: "Imel", age: 24, gender: "female" },
-  { id: 3, name: "Nazri SE", age: 50, gender: "male" },
-  { id: 4, name: "Nazri", age: 50, gender: "male" },
-]
-export default function Page() {
+async function getTodos() {
+  try {
+    const res = await fetch("https://v1.appbackend.io/v1/rows/cSdyjihMzRel", {
+      cache: "no-store", // tidak akan di cache
+    });
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    console.log(error);
+    return [];
+  }
+}
+
+export default async function Page() {
+  const { data } = await getTodos();
   return (
-    <UserProvider>
-      <Header />
-      <div>Hello ini dari page.js</div>
-      <UserInfo />
-      <NoteCreate />
-      <NotesLists />
-      <Footer />
-      {/* <div className="flex flex-col gap-5">
-        {students.map((student) => {
-          // teknik spreading: pemetaan dari key dlm sebuah objek sesuai dgn nama dr atributnya
-          return <Card key={student.id} {...student} />;
+    <div>
+      <div className="space-y-4">
+        {data.map((queue) => {
+          return (
+           <TodoCard key={queue._id} 
+           id={queue._id}
+           menu={queue.menu} 
+           amount={queue.amount}/>
+          );
         })}
-      </div> */}
-      {/* <NameCard /> */}
-    </UserProvider>
+      </div>
+      <TodoCreate />
+    </div>
   )
 }
